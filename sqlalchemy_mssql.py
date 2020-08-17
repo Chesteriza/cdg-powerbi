@@ -141,7 +141,10 @@ DimDates_df.CalendarDayOfWeek = DimDates_df.CalendarDayOfWeek.astype(str)
 ## Perform Regex Lambda to get information 
 DimDates_df.CalendarQuarter = DimDates_df.CalendarQuarter.apply(lambda x: re.match(r"2009(\d+)", x).group(1))
 DimDates_df.CalendarMonth = DimDates_df.CalendarMonth.apply(lambda x: re.match(r"2009(\d*)", x).group(1))
-DimDates_df.CalendarDayOfWeek = DimDates_df.CalendarDayOfWeek.apply(lambda x: re.match(r"2009(\d*)", x).group(1))
+
+## Due to issues with the original date of CalendarDayOfWeek, we will use datetime package to generate features of the Calendary DateTime
+DimDates_df.CalendarDayOfWeek = DimDates_df.DateID.apply(lambda x: x.weekday())
+
 
 ## Convert back to int
 DimDates_df.CalendarQuarter = DimDates_df.CalendarQuarter.astype('int32')
