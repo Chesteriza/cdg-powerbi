@@ -131,6 +131,25 @@ for i in range(len(sql_script_list)):
     print(i)
     execute_query(conn, sql_script_list[i])
 
+## Perform some data cleaning of the DimDates Table 
+DimDates_df = pd.read_sql("SELECT * FROM DimDates", conn)
+## Notice Quarter, Month and Day are not in proper format
+DimDates_df.CalendarQuarter = DimDates_df.CalendarQuarter.astype(str)
+DimDates_df.CalendarMonth = DimDates_df.CalendarMonth.astype(str)
+DimDates_df.CalendarDayOfWeek = DimDates_df.CalendarDayOfWeek.astype(str)
+
+## Perform Regex Lambda to get information 
+DimDates_df.CalendarQuarter = DimDates_df.CalendarQuarter.apply(lambda x: re.match(r"2009(\d+)", x).group(1))
+DimDates_df.CalendarMonth = DimDates_df.CalendarMonth.apply(lambda x: re.match(r"2009(\d*)", x).group(1))
+DimDates_df.CalendarDayOfWeek = DimDates_df.CalendarDayOfWeek.apply(lambda x: re.match(r"2009(\d*)", x).group(1))
+
+## Convert back to int
+DimDates_df.CalendarQuarter = DimDates_df.CalendarQuarter.astype('int32')
+DimDates_df.CalendarMonth = DimDates_df.CalendarMonth.astype('int32')
+DimDates_df.CalendarDayOfWeek = DimDates_df.CalendarDayOfWeek.astype('int32')
+
+## Upload Transformed DF onto Database
+DimDates_df.to_sql("DimDates", conn, if_exists="replace")
 
 ## Preview tables
 FactStore_df = pd.read_sql("SELECT * FROM FactStore", conn)
