@@ -152,7 +152,7 @@ DimDates_df.CalendarMonth = DimDates_df.CalendarMonth.astype('int32')
 DimDates_df.CalendarDayOfWeek = DimDates_df.CalendarDayOfWeek.astype('int32')
 
 ## Upload Transformed DF onto Database
-DimDates_df.to_sql("DimDates", conn, if_exists="replace")
+DimDates_df.to_sql("DimDates", conn, if_exists="replace", index=False)
 
 ## Preview tables
 FactStore_df = pd.read_sql("SELECT * FROM FactStore", conn)
